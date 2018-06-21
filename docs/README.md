@@ -3,21 +3,26 @@
 - [Sentinl documentation](http://sentinl.readthedocs.io/en/latest/)
 - [Sentinl github](https://github.com/sirensolutions/sentinl)
 
+## Content
+- [Versions](#versions)
+- [What is a watcher](#what-is-a-watcher)
+- [How to use Sentinl watchers](#how-to-use-sentinl-watchers)
+- [First Watcher](#first-watcher)
+- [Understanding the Sentinl UI](#understading-the-sentinl-ui)
+- [Editing your alarm](#editing-your-alarm)
+
 ## Versions
 - This tutorial was created using the following versions of required software
   - Kibana 6.2.4
-  - Elastic Search 6.2.4
+  - Elasticsearch 6.2.4
   - Sentinl 6.2.4
-- Keep in mind that Sentinl is an open source project, and there is possibly bugs due to the high pace of Elastic and Elastic not keeping backward compatibility when releasing new versions.
-
+- Keep in mind that Sentinl is an open source project, and there is possibly bugs due to the high pace of Elastic and Elastic not keeping backward compatibility for plugins when releasing new versions.
 
 
 ## What is a watcher
 
 - A watcher watches over your data, and based on your queries it will trigger an alert.
 - How advanced an watcher is relies upon the user or admin of the system.
-
-
 
 ## How to use Sentinl watchers
 
@@ -34,9 +39,6 @@
 	- When that button is pressed the query which is generated from the visualization you are currently browsing is passed into a Watcher. (In order to see your query just switch to the request tab)
 	- There is also a possibility to browse the response from the elasticsearch server, this could be useful when creating more advanced alerts that involves using JavaScript.
 
-
-
-
 ## First watcher
 
 1. From the Visualization SPYs watcher tab click "Set Alarm"
@@ -45,15 +47,15 @@
 	- The query is based on what you have selected in the time filter, but it will turn these timestamps into relative fields (e.g. "gte":"now-15m/m", "lte":"now/m")
 ![Spy_wizard](img/watcher_wizard.png "The watcher wizard interface")
 	- **Whether this interface looks like this or not is hard to predict, but we've submitted issues and pull requests with our desires. One of them is the dropdown in which you can specify is;  Is above, Is below and Equals.**
-1. Specify  attributes for the watcher and don't worry about the specifics! They will be covered in [Understanding the Sentinl UI](#understanding-the-sentinl-ui)
-2. **Actions** are critical components of a watcher, their purpose is to alert you on your desired channel when the query is successful.**TODO MORE**
-3. Press save and you should be redirected to the Sentinl UI. (The same UI as when you select Sentinl from the menu on the left. See [Understanding the Sentinl UI](#understanding-the-sentinl-ui))
-
-
+1. Specify  attributes for the watcher.
+2. Press save and you should be redirected to the Sentinl UI. (The same UI as when you select Sentinl from the menu on the left. See [Understanding the Sentinl UI](#understanding-the-sentinl-ui))
 
 ## Understanding the Sentinl UI
 ![Sentinl user interface](img/sentinl_ui.png "Redirected from the visualization SPY ui. It's also selected on the left menu.")
 - The Sentinl UI provides you with the basics of **monitoring**, **creating**, **maintaining**, **updating**, **deleting** and **testing/executing** both watchers and reports.
+- In the top right corner of the Sentinl UI there is two buttons, the one you will be using is New, which starts the process of creating a new watcher or alarm.
+- When pressing "New" you will be presented with a window/drop down that lets you specify whether it's a new watcher or a new reporter that you wish to create.
+
 
 #### Monitoring
 - The basics of monitoring Sentinl watchers is in the Alarms tab. You can preview the format and looks of your alarms that have been run.
@@ -61,15 +63,23 @@
 - Timestamp, Level, Action and Message are columns in the table, on the right side of each alarm is the possibility to expand and view its json format with the three dots button and delete the alarm. (**This does not delete watchers.**)
 -
 
-
-  #### Creating
+#### Creating
 - In the the top right corner of the Sentinl UI there is two buttons, the one you will be using is **New**, which starts the process of creating a new watcher or reporter.
 - When pressing **New** you will be presented with a window/drop down that lets you specify whether it's a new watcher or a new reporter that you wish to create.
 - Creating an alarm from scratch is not a simple task, luckily there are ways to avoid manually creating queries.
-  - The visualization SPY is
-
+- The visualization SPY is
 
 ## Editing your alarm
+
+
+
+## Date math
+
+![Date math](img/date_math_index.png "Date math examples that could help on selecting a specific day, month or year index.")
+https://www.elastic.co/guide/en/elasticsearch/reference/6.2/date-math-index-names.html
+
+
+
 
 
 ## Guides and tutorials
