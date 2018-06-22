@@ -12,6 +12,10 @@
 - [Editing your alarm](#editing-your-alarm)
 - [Date math](#date-math)
 - [Guides and tutorials](#guides-and-tutorials)
+  - [Threshold alerting](threshold_alert.md)
+  - [Anomaly alerting](anomaly_alert.md)
+  - [Cardinality alerting](cardinality_alert.md)
+  - [Frequently asked questions](FAQ.md)
 
 ## Versions
 - This tutorial was created using the following versions of required software
@@ -92,13 +96,56 @@
   }
 }
 ```
-- It's not much to start with. But using the query from the visualization SPY could speed up things. Below is an example query.
+- It's not much to start with. But using the query from the visualization SPY query tab could speed up things. Below is an example query.
 
-<!--- TODO add contents of spy vis query -->
-```json
-
-```
-- So when merging the template with your query theres still some fields that require input. These are:
+  <!--- TODO add contents of spy vis query -->
+  ```json
+  {
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "aggs": {
+    "2": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "interval": "1m",
+        "time_zone": "Europe/Berlin",
+        "min_doc_count": 1
+      }
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "script_fields": {},
+  "docvalue_fields": [
+    "@timestamp"
+  ],
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_all": {}
+        },
+        {
+          "range": {
+            "@timestamp": {
+              "gte": 1529645280668,
+              "lte": 1529648880668,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  }
+}
+  ```
+- When merging the template with your query theres still some fields that require input. These are:
   - Index (Elasticsearch index pattern)
     - e.g. ```logstash-2018.06.20```
     - This is an array, so multiple fields are allowed. e.g
@@ -107,15 +154,102 @@
         "index": [
           "logstash-2018.06.19",
           "logstash-2018.06.20"
-        ]
+        ],
+        "body": {"..."}
       }
       ```
-  - Relative timestamps 
+    - Relative timestamps could also be used. [Date math](#date-math)
+      - ```<logstash-{now-1d/d}>```
+      - ```<logstash-{now/d}```
+      - Keep in mind that in the Sentinl watcher list they will not appear with the correct date, they will look like they do in the example above. (V 6.2.4)
+  - Range in the query
+    - The range is converted to a relative field when creating using the visualization spy, but without these are static fields (often epoch timestamps)
+    - e.g.
+    ```json
+    "range": {
+            "@timestamp": {
+              "gte": 1529645280668,
+              "lte": 1529648880668,
+              "format": "epoch_millis"
+            }
+          }
+    ```
+    - Would need to be changed to:
+    ```json
+    "range": {
+            "@timestamp": {
+              "gte": "now-1h/h",
+              "lte": "now/h",
+            }
+          }
+    ```
+    - This is crucial if the goal is to have an alert thats relative and won't expire when the timestamps are not valid anymore.
+  - Merging the template with the query from SPY visualization we first need to copy our query, the query is going to be copied into the request body in the watcher creation.
+  - Copy the query
 
+  ![Copying the visualization](img/copy_spy_query.png "Copying the query body")
+
+  - Navigate to watcher creation
+    - If you copied the entire query as shown in the image above you need to replace the curly brackets ```{}``` of the ```body``` with the query copied.
+
+![Ready to paste](img/ready_for_query.png "Selecting the curly brackets and ready to paste the query from the spy visualization.")
 <!--- TODO show a merge of the template and query from spy vis -->
-```json
 
+```json
+    {
+  "search": {
+    "request": {
+      "index": [],
+      "body": {
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "aggs": {
+    "2": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "interval": "1m",
+        "time_zone": "Europe/Berlin",
+        "min_doc_count": 1
+      }
+    }
+  },
+  "stored_fields": [
+    "*"
+  ],
+  "script_fields": {},
+  "docvalue_fields": [
+    "@timestamp"
+  ],
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_all": {}
+        },
+        {
+          "range": {
+            "@timestamp": {
+              "gte": 1529645280668,
+              "lte": 1529648880668,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ],
+      "filter": [],
+      "should": [],
+      "must_not": []
+    }
+  }
+}
+    }
+  }
+}
 ```
+  - You will notice that the indentation is not correct on some fields, for example the last three curly brackets does not look correct at all, but it's just visual. An useful tip for debugging the watchers input query is to use an editor that supports json and use its functionality to get the correct indentation on each line.
+  - Now fill the missing fields described above, such as index and range/timestamp ranges and other desirable fields.
 
 ## Editing your alarm
 
