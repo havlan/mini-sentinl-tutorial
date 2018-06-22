@@ -1,7 +1,10 @@
 # Sentinl watcher tutorial
 
-- [Sentinl documentation](http://sentinl.readthedocs.io/en/latest/)
-- [Sentinl github](https://github.com/sirensolutions/sentinl)
+- Read before this tutorial
+  - [Sentinl documentation](http://sentinl.readthedocs.io/en/latest/)
+- Open for issues/improvements
+  - [Sentinl github](https://github.com/sirensolutions/sentinl)
+  - [This tutorial you are reading now](https://github.com/havlan/mini-sentinl-tutorial)
 
 ## Content
 - [Versions](#versions)
@@ -10,7 +13,7 @@
 - [First Watcher](#first-watcher)
 - [Testing input queries](#testing-input-queries)
 - [Understanding the Sentinl UI](#understanding-the-sentinl-ui)
-- [Editing your alarm](#editing-your-alarm)
+- [Edit watcher](#edit-alarm)
 - [Date math](#date-math)
 - [Guides and tutorials](#guides-and-tutorials)
   - [Threshold alerting](threshold_alert.md)
@@ -68,15 +71,16 @@
 
 
 ## Testing input queries
-**WIP**
 
 - There are several ways to test the watchers input query, the simplest is to go in Kibana dev tools and test it.
 - Copy the query from the visualization SPY request tab and go to dev tools.
-- The dev tools require HTTP verbs such as GET, POST, PUT, DELETE. To test the input query, use ```GET _msearch```
+- The dev tools require HTTP verbs such as GET, POST, PUT, DELETE. To test the input query, use ```GET _msearch```   [Doc](https://www.elastic.co/guide/en/kibana/current/console-kibana.html)
 - If the query is copied from the visualization SPY you will need to specify index name.
   - The query is not ready just yet, you will need a json object with an index field.
   - e.g.
 
+
+<!--- TODO Why can't the JSON be unindented? Why does _msearch query break? -->
 ```json
 GET _msearch
 {"index": ["logstash-2018.06.21"]}
@@ -101,8 +105,9 @@ GET _msearch
 
 
 #### Monitoring
+
 - The basics of monitoring Sentinl watchers is in the Alarms tab. You can preview the format and looks of your alarms that have been run.
--
+
 ![Alarms tab](img/alarms_tab.png "The alarms tab with one alarm being inspected, where you can easily preview its format.")
 
 - Timestamp, Level, Action and Message are columns in the table, on the right side of each alarm is the possibility to expand and view its json format with the three dots button and delete the alarm. (**This does not delete watchers.**)
@@ -116,7 +121,7 @@ GET _msearch
 - The visualization SPY is worth using in this case. Just to get the simplest of structure in your manually created alert.
 - You could also test your query from the visualization SPY in the kibana dev tools.
 - Below is your starting point for manually creating an alert.
--
+
 ```json
 {
   "search": {
@@ -180,45 +185,47 @@ GET _msearch
   - Index (Elasticsearch index pattern)
     - e.g. ```logstash-2018.06.20```
     - This is an array, so multiple fields are allowed. e.g
-    ```json
-    "request": {
-        "index": [
-          "logstash-2018.06.19",
-          "logstash-2018.06.20"
-        ],
-        "body": {"..."}
-      }
-      ```
-    - Relative timestamps could also be used. [Date math](#date-math)
-      - ```<logstash-{now-1d/d}>```
-      - ```<logstash-{now/d}```
-      - Keep in mind that in the Sentinl watcher list they will not appear with the correct date, they will look like they do in the example above. (V 6.2.4)
+
+```json
+"request": {
+    "index": [
+      "logstash-2018.06.19",
+      "logstash-2018.06.20"
+    ],
+    "body": {"..."}
+  }
+  ```
+
+  - Relative timestamps could also be used. [Date math](#date-math)
+    - ```<logstash-{now-1d/d}>```
+    - ```<logstash-{now/d}```
+    - Keep in mind that in the Sentinl watcher list they will not appear with the correct date, they will look like they do in the example above. (V 6.2.4)
   - Range in the query
     - The range is converted to a relative field when creating using the visualization spy, but without these are static fields (often epoch timestamps)
     - e.g.
 
-    ```json
-    "range": {
-            "@timestamp": {
-              "gte": 1529645280668,
-              "lte": 1529648880668,
-              "format": "epoch_millis"
-            }
-          }
-    ```
+```json
+"range": {
+        "@timestamp": {
+          "gte": 1529645280668,
+          "lte": 1529648880668,
+          "format": "epoch_millis"
+        }
+      }
+```
 
-    - Would need to be changed to:
+  - Would need to be changed to:
 
-    ```json
-    "range": {
-            "@timestamp": {
-              "gte": "now-1h/h",
-              "lte": "now/h",
-            }
-          }
-    ```
+```json
+"range": {
+        "@timestamp": {
+          "gte": "now-1h/h",
+          "lte": "now/h",
+        }
+      }
+```
 
-    - This is crucial if the goal is to have an alert thats relative and won't expire when the timestamps are not valid anymore.
+  - This is crucial if the goal is to have an alert thats relative and won't expire when the timestamps are not valid anymore.
   - Merging the template with the query from SPY visualization we first need to copy our query, the query is going to be copied into the request body in the watcher creation.
   - Copy the query
 
@@ -346,6 +353,7 @@ GET _msearch
 
 - The action tab lets you specify how to be alerted when a watcher triggers an alert.
   - Watchers can have several actions
+  - Throttle <!---TODO throttle -->
   - Messages in actions use handlebars syntax to extract information from the payload. [Handlebars tips](handlebars.md)
     - e.g. print total hits ``` {{paylaod.total.hits}}```
     - Use the same technique as when creating condition scripts. Attributes need to be wrapped in curly brackets as illustrated above.
@@ -356,7 +364,25 @@ GET _msearch
 - To edit a specific alarm press the button with tree dots in it (leftmost button in the image below)
 
 ![Action image](img/list_buttons.png "Image of the buttons available for each watcher")  
-(Action buttons with to each watcher. (Edit, Execute, Delete, Disable))
+(Action buttons listed with each watcher. (Edit, Execute, Delete, Disable))
+
+## Execute watcher
+
+- Execute a watcher with the play button
+  - This overrides the trigger schedule
+  - Still needs to query and conditions needs to be met in order for it to be executed
+
+
+## Delete watchers
+
+- Delete a watcher with the thrash can button
+  - This deletes a watchers
+  - It does not delete query templates that were created using this watcher
+
+## Disable watcher
+
+- Disables watcher
+
 
 ## Date math
 
