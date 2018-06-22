@@ -16,6 +16,7 @@
   - [Threshold alerting](threshold_alert.md)
   - [Anomaly alerting](anomaly_alert.md)
   - [Cardinality alerting](cardinality_alert.md)
+  - [Handlebars](handlebars.md)
   - [Frequently asked questions](FAQ.md)
 
 ## Versions
@@ -293,6 +294,7 @@ GET _msearch
   - To preview result from your input query, you can either use dev tools in kibana or preview response in the response tab in the visualization SPY.
   - The condition could be a script field or compare to mention two popular options. The default one is script(JavaScript). [Condition documentation](http://sentinl.readthedocs.io/en/latest/Watcher-Anatomy/#condition_1)
 - Below is a simple example on a query that counts data of an index in the last hour.
+
 ```json
 {
   "took": 5,
@@ -341,12 +343,20 @@ GET _msearch
 - The transform tab gives you options to transform your payload in the watch execution context to prepare it for the watch actions.
   - [Transform documentation and examples](http://sentinl.readthedocs.io/en/latest/Watcher-Anatomy/#transform_1)
 
+
 - The action tab lets you specify how to be alerted when a watcher triggers an alert.
-  - 
+  - Watchers can have several actions
+  - Messages in actions use handlebars syntax to extract information from the payload. [Handlebars tips](handlebars.md)
+    - e.g. print total hits ``` {{paylaod.total.hits}}```
+    - Use the same technique as when creating condition scripts. Attributes need to be wrapped in curly brackets as illustrated above.
 
-## Editing your alarm
+## Edit watcher
 
+- Editing watchers is done from the preview list, where all the watchers are listed
+- To edit a specific alarm press the button with tree dots in it (leftmost button in the image below)
 
+![Action image](img/list_buttons.png "Image of the buttons available for each watcher")  
+(Action buttons with to each watcher. (Edit, Execute, Delete, Disable))
 
 ## Date math
 
@@ -362,4 +372,5 @@ GET _msearch
 - [Threshold alerting](threshold_alert.md)
 - [Anomaly alerting](anomaly_alert.md)
 - [Cardinality alerting](cardinality_alert.md)
+- [Handlebars](handlebars.md)
 - [Frequently asked questions](FAQ.md)
