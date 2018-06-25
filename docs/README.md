@@ -25,6 +25,7 @@
   - [Cardinality alerting](cardinality_alert.md)
   - [Handlebars](handlebars.md)
   - [Frequently asked questions](FAQ.md)
+  - [Reports](reports.md)
 - Advanced
   - [Testing input queries](#testing_input_queries.md)
 
@@ -38,13 +39,12 @@
 
 ## What is a watcher
 
-- A watcher watches over your data, and based on your queries it will trigger an alert.
-- How advanced an watcher is relies upon the user or admin of the system.
+- A watcher watches over your data, and based on your queries and conditions it will trigger an alert.
 
-## How to use Sentinl watchers
+## First watcher
 
 - The most intuitive way is to create a watcher is directly from a visualization or from a visualization saved in your dashboard.
-  - In order to do this, you need to create a visualization of your data.
+  - In order to do this, you need to create a visualization of your data and select the desired time range in time filter. (top right corner)
 
 - Important aspects:
 	- Creating watchers from a visualization:
@@ -53,26 +53,30 @@
 	![Spy button in the bottom right corner](img/spy_button.png "Spy button in the bottom left corner of the visualization, with a blue square around it.")
 
 	- Visualization SPY
-  ![Spy tab](img/spy_tab.png "Visualization SPY contains Several tabs. [Table, Watcher(Sentinl), Request, Response, Statistics]")
+  ![Spy tab](img/spy_tab.png "Visualization SPY contains Several tabs. [Table, Watcher, Request, Response, Statistics]")
+	- Table tab provides a data overview
+	- Watcher tab provides you with an option to create a watcher from a visualization
+	- Request tab holds the request used creating the visualization
+	- Response tab presents the server response
+	- Statistics tab presents basic statistics
 
-	- Watcher tab of Visualization SPY contains a single button which says "Set Alarm".
-	- When that button is pressed the query which is generated from the visualization you are currently browsing is passed into a Watcher. (In order to see your query just switch to the request tab)
-	- There is also a possibility to browse the response from the elasticsearch server, this could be useful when creating more advanced alerts that involves using JavaScript.
+#### Step by step
+- Create and form your visualization
+- Remember that even though the visualization below uses date histograms, it's the time filter (red arrow pointing to it) that specifies the range of the query.
+- Press "Set Alarm" (blue arrow)
 
+![Create visualization](img/create_vis.png "Create a visualziation")
 
-## First watcher
-
-
-1. From the Visualization SPYs watcher tab click "Set Alarm"
-1. You will be presented with a Sentinl watcher wizard.
+- You will be presented with a Sentinl watcher wizard.
 	- This wizard uses the queries generated from your visualization in it's watcher operations (request tab)
 	- The query is based on what you have selected in the time filter, but it will turn these timestamps into relative fields (e.g. "gte":"now-15m/m", "lte":"now/m")
-	-
+	- Schedule is an important concept of watchers, the range specified in the time filter limits the query, the schedule itself tells the scheduler how often to run this query.
+- Add actions of your choice (red arrow)
+
 ![Spy_wizard](img/watcher_wizard.png "The watcher wizard interface")
-
-1. Specify  attributes for the watcher.
-2. Press save and you should be redirected to the Sentinl UI. (The same UI as when you select Sentinl from the menu on the left. See [Understanding the Sentinl UI](#understanding-the-sentinl-ui))
-
+- Add actions, condition number, condition operator and schedule.
+- Press save and you should be redirected to the Sentinl UI. (The same UI as when you select Sentinl from the menu on the left. See [Understanding the Sentinl UI](#understanding-the-sentinl-ui))
+- Keep in mind that this is the easiest way to create a watcher, after creating one it's easy to edit.
 
 ## Understanding the Sentinl UI
 
@@ -90,7 +94,9 @@
 ![Alarms tab](img/alarms_tab.png "The alarms tab with one alarm being inspected, where you can easily preview its format.")
 
 - Timestamp, Level, Action and Message are columns in the table, on the right side of each alarm is the possibility to expand and view its json format with the three dots button and delete the alarm. (**This does not delete watchers.**)
--
+- Alarms are passed to elasticsearch using the ```<watcher_alarm-{now/d}>``` index name.
+
+![Visualizing alarm count](img/alarm_index.png "Visualizing alarm count per hour.")
 
 #### Creating
 - In the the top right corner of the Sentinl UI there is two buttons, the one you will be using is **New**, which starts the process of creating a new watcher or reporter.

@@ -9,7 +9,7 @@
 - [Frequently asked questions](FAQ.md)
 
 
-**A threshold is simply a limit (e.g. lower, higher, equals) of your defined query**
+**A threshold is simply a limit (e.g. lower, higher) on the results of your query**
 
 
 ### Examples
@@ -187,11 +187,24 @@
 - Lucene solution:
 
 ```json
-
+{
+  "array_compare": {
+    "payload.aggregations.top_amounts.buckets" : {
+      "path": "doc_count" ,
+      "gte": {
+        "value": 1000,
+      }
+    }
+  }
+}
 ```
 
 - Script solution:
 
 ```json
-
+{
+  "script": {
+    "script": "var match=false;var data = payload.aggregations['2'].buckets; for (var i in data) { if(data[i].doc_count >= 1000){match = true;break;}}match;"
+  }
+}
 ```
