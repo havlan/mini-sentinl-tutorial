@@ -39,7 +39,7 @@
 
 ## What is a watcher
 
-- A watcher watches over your data, and based on your queries and conditions it will trigger an alert.
+- A watcher watches over your data, based on your queries and conditions it will trigger an alert.
 
 ## First watcher
 
@@ -72,6 +72,10 @@
 	- The query is based on what you have selected in the time filter, but it will turn these timestamps into relative fields (e.g. "gte":"now-15m/m", "lte":"now/m")
 	- Schedule is an important concept of watchers, the range specified in the time filter limits the query, the schedule itself tells the scheduler how often to run this query.
 - Add actions of your choice (red arrow)
+  - In my example I want to get notified by email and slack every minute when there is more than 5 hits on my query in a now - 15 minutes range
+  - I'm limiting email actions to every thirty minutes.
+<!--- TODO add image which specifies throttle period of an action -->
+
 
 ![Spy_wizard](img/watcher_wizard.png "The watcher wizard interface")
 - Add actions, condition number, condition operator and schedule.
