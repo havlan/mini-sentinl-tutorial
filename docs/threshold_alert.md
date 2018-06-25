@@ -1,5 +1,7 @@
 ## Threshold alerting
 
+- [Sentinl tutorial](README.md)
+
 - [Threshold alerting](threshold_alert.md)
 - [Anomaly alerting](anomaly_alert.md)
 - [Cardinality alerting](cardinality_alert.md)
@@ -9,14 +11,60 @@
 
 **A threshold is simply a limit (e.g. lower, higher, equals) of your defined query**
 
-#### Examples
+
+### Examples
 
 ##### Single
 
+- This was created just counting an index over the last 5 years.
+
+```json
+{
+  "took": 41,
+  "timed_out": false,
+  "_shards": {
+    "total": 15,
+    "successful": 15,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 10092,
+    "max_score": 0,
+    "hits": []
+  },
+  "status": 200
+}
+```
+
+- I want to check when the count hits 15000
+- Lucene solution:
+
+```json
+{
+  "compare": {
+    "payload.hits.total": {
+      "gte": 20000
+    }
+  }
+}
+```
+
+
+- Script solution:
+
+```json
+{
+  "script": {
+    "script": "payload.hits.total >= 20000"
+  }
+}
+```
 
 #### Single date histogram
 
 - Created using date histogram with 3m interval
+  - the buckets doc_count represents the number of counts in the last three minutes
 
 ```json
 {
@@ -133,4 +181,17 @@
     }
   ]
 }
+```
+
+- I want an alert when the first one passes 1000
+- Lucene solution:
+
+```json
+
+```
+
+- Script solution:
+
+```json
+
 ```

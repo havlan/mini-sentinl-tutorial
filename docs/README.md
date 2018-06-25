@@ -13,7 +13,11 @@
 - [First Watcher](#first-watcher)
 - [Testing input queries](#testing-input-queries)
 - [Understanding the Sentinl UI](#understanding-the-sentinl-ui)
-- [Edit watcher](#edit-alarm)
+- [Watcher administration](#watcher-administration)
+  - [Edit watcher](#edit-alarm)
+  - [Execute watcher](#execute-watcher)
+  - [Delete watcher](#delete-watcer)
+  - [Disable watcher](#disable watcher)
 - [Date math](#date-math)
 - [Guides and tutorials](#guides-and-tutorials)
   - [Threshold alerting](threshold_alert.md)
@@ -21,13 +25,15 @@
   - [Cardinality alerting](cardinality_alert.md)
   - [Handlebars](handlebars.md)
   - [Frequently asked questions](FAQ.md)
+- Advanced
+  - [Testing input queries](#testing_input_queries.md)
 
 ## Versions
 - This tutorial was created using the following versions of required software
   - Kibana 6.2.4
   - Elasticsearch 6.2.4
   - Sentinl 6.2.4
-- Keep in mind that Sentinl is an open source project, and there is possibly bugs due to the high pace of Elastic and Elastic not keeping backward compatibility for plugins when releasing new versions.
+<!--- - Keep in mind that Sentinl is an open source project, and there is possibly bugs due to the high pace of Elastic and Elastic not keeping backward compatibility for plugins when releasing new versions. -->
 
 
 ## What is a watcher
@@ -37,9 +43,8 @@
 
 ## How to use Sentinl watchers
 
-- A Sentinl watcher could be used in several ways, the most intuitive way is to create one directly from a visualization or from a visualization saved in your dashboard.
+- The most intuitive way is to create a watcher is directly from a visualization or from a visualization saved in your dashboard.
   - In order to do this, you need to create a visualization of your data.
-  - My data in all of the tutorials is a randomly generated ip, (Literally bash RANDOM and a timestamp).
 
 - Important aspects:
 	- Creating watchers from a visualization:
@@ -65,34 +70,8 @@
 	-
 ![Spy_wizard](img/watcher_wizard.png "The watcher wizard interface")
 
-	- **Whether this interface looks like this or not is hard to predict, but we've submitted issues and pull requests with our desires. One of them is the dropdown in which you can specify is;  Is above, Is below and Equals.**
 1. Specify  attributes for the watcher.
 2. Press save and you should be redirected to the Sentinl UI. (The same UI as when you select Sentinl from the menu on the left. See [Understanding the Sentinl UI](#understanding-the-sentinl-ui))
-
-
-## Testing input queries
-
-- There are several ways to test the watchers input query, the simplest is to go in Kibana dev tools and test it.
-- Copy the query from the visualization SPY request tab and go to dev tools.
-- The dev tools require HTTP verbs such as GET, POST, PUT, DELETE. To test the input query, use ```GET _msearch```   [Doc](https://www.elastic.co/guide/en/kibana/current/console-kibana.html)
-- If the query is copied from the visualization SPY you will need to specify index name.
-  - The query is not ready just yet, you will need a json object with an index field.
-  - e.g.
-
-
-<!--- TODO Why can't the JSON be unindented? Why does _msearch query break? -->
-```json
-GET _msearch
-{"index": ["logstash-2018.06.21"]}
-```
-  - Luckily you can simply copy the query from the visualization SPY directly under the json object above.
-
-```json
-GET _msearch
-{"index": ["logstash-2018.06.21"]}
-{"size":0,"_source":{"excludes":[]},"aggs":{"2":{"date_histogram":{"field":"@timestamp","interval":"1m","time_zone":"Europe/Berlin","min_doc_count":1}}},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp"],"query":{"bool":{"must":[{"match_all":{}},{"range":{"@timestamp":{"gte":"now-24h/h","lte":"now/h","format":"epoch_millis"}}}],"filter":[],"should":[],"must_not":[]}}}
-```
-
 
 
 ## Understanding the Sentinl UI
@@ -100,7 +79,7 @@ GET _msearch
 ![Sentinl user interface](img/sentinl_ui.png "Redirected from the visualization SPY ui. It's also selected on the left menu.")
 
 - The Sentinl UI provides you with the basics of **monitoring**, **creating**, **maintaining**, **updating**, **deleting** and **testing/executing** both watchers and reports.
-- In the top right corner of the Sentinl UI there is two buttons, the one you will be using is New, which starts the process of creating a new watcher or alarm.
+- In the top right corner of the Sentinl UI there is two buttons, the one you will be using is New, which starts the process of creating a new watcher or reporter.
 - When pressing "New" you will be presented with a window/drop down that lets you specify whether it's a new watcher or a new reporter that you wish to create.
 
 
@@ -358,39 +337,85 @@ GET _msearch
     - e.g. print total hits ``` {{paylaod.total.hits}}```
     - Use the same technique as when creating condition scripts. Attributes need to be wrapped in curly brackets as illustrated above.
 
-## Edit watcher
 
-- Editing watchers is done from the preview list, where all the watchers are listed
-- To edit a specific alarm press the button with tree dots in it (leftmost button in the image below)
+## Watcher administration
+
+- Each watcher has four buttons (from left to right) that gives the user the options to edit, execute, delete and disable watchers.
 
 ![Action image](img/list_buttons.png "Image of the buttons available for each watcher")  
 (Action buttons listed with each watcher. (Edit, Execute, Delete, Disable))
 
-## Execute watcher
+### Edit watcher
 
+- First button of a watcher list object
+- Editing watchers is done from the preview list, where all the watchers are listed
+- To edit a specific alarm press the button with tree dots in it (leftmost button in the image below)
+
+
+### Execute watcher
+
+- Second button of a watcher list object
 - Execute a watcher with the play button
   - This overrides the trigger schedule
   - Still needs to query and conditions needs to be met in order for it to be executed
 
 
-## Delete watchers
+### Delete watchers
 
+- Third button of a watcher list object
 - Delete a watcher with the thrash can button
   - This deletes a watchers
   - It does not delete query templates that were created using this watcher
 
-## Disable watcher
+### Disable watcher
 
+- Forth and last button of a watcher list object
 - Disables watcher
 
 
 ## Date math
 
+- Date math is an important aspect of creating alarms that are not limited to between static timestamps.
+- Relative fields are more commonly used in order to create watchers that serve a more general purpose.
+
+- Example of a non dynamic time range:
+  - gte: Wed Jun 20 2018 10:00:00
+  - lte: Thu Jun 28 2018 11:00:00
+
+```json
+"range": {
+    "@timestamp": {
+      "gte": 1529488800000,
+      "lte": 1530183600000,
+      "format": "epoch_millis"
+    }
+}
+```
+
+- An example with dynamic time range:
+
+```json
+"range": {
+    "@timestamp": {
+      "gte": "now-193h/h",
+      "lte": "now/h"
+    }
+}
+```
+- Date math applies to index names as well. Notice the different syntax.
+
 ![Date math](img/date_math_index.png "Date math examples that could help on selecting a specific day, month or year index.")
 
 [Elasticsearch datemath](https://www.elastic.co/guide/en/elasticsearch/reference/6.2/date-math-index-names.html)
 
+- Example of accessing logstash-TODAY and logstash-YESTERDAY
 
+```json
+"index": [
+  "<logstash-{now/d}>",
+  "<logstash-{now/d-1d}>"
+]
+```
 
 
 
