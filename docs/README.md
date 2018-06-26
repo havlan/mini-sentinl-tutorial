@@ -36,6 +36,9 @@
   - Sentinl 6.2.4
 <!--- - Keep in mind that Sentinl is an open source project, and there is possibly bugs due to the high pace of Elastic and Elastic not keeping backward compatibility for plugins when releasing new versions. -->
 
+<!--- slack alerting per watcher (hook) -->
+
+<!---  -->
 
 ## What is a watcher
 
