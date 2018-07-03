@@ -1,0 +1,4 @@
+Anomaly
+
+it basically groups and find series not fitting the progressive average
+https://github.com/QXIP/queryda/blob/master/src/validators/anomalies.js

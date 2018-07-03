@@ -2,8 +2,9 @@
 
 - Below is a condition to check for a field called mos which is random integer [1,8]
 - Leaving the condition like this the watcher would use the [68-95-99_7 rule](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule), as a way to check for anomalies.
--
 
+- [Sentinl issue 487](https://github.com/sirensolutions/sentinl/issues/487)
+- Expected when creating blacklists is that the anomaly is checked in general towards an statistical rule and not something else. [Rule](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule)
 
 ```json
 {

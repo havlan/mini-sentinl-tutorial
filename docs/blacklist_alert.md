@@ -1,17 +1,16 @@
 ## Blacklist alerting
 
+- [Sentinl issue 487](https://github.com/sirensolutions/sentinl/issues/487)
+  - Expected when creating blacklists is that the anomaly is checked in general towards an statistical rule and not something else. [Rule](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule)
+
 
 ### Creating a blacklist alert requires some manual editing
 
 - What do you want to blacklist?
 - How many hits before triggering an alert?
 
-
 - In the condition part of a watcher, define it like you normally would with script conditions
 - Below are ways of doing it
-
-
-
 
 
 
